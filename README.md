@@ -1,6 +1,7 @@
 # Magic-Tree-Website
 
 On this website, you can make a wish, and the Magic Tree will give you an answer.
+You can browse the web by clicking on the link：https://lussyxi.github.io/Magic-Tree-website/
 
 <span style="color:red;">**Notice**</span>
 - **If the model does not load, please wait patiently for the JS files to download, try refreshing the page several times, or open a VPN.**
