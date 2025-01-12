@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Tree</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /* 设置背景图片 */
+            background-image: url('img/bg.png');
+            /* 确保背景图片不会重复 */
+            background-repeat: no-repeat;
+            /* 背景图片大小覆盖整个body，可以根据需要选择其他值如 'contain' 或者具体的宽度和高度 */
+            background-size: cover;
+            /* 背景图片位置居中 */
+            background-position: center;
+            /* 设置一种颜色作为背景图片加载前或者图片无法加载时的背景色 */
+            background-color: #1a2a6c;
+            /* 使用原来的渐变色中的一个颜色，确保视觉连续性*/
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            padding: 0 50px;
+        }
+
+        .content {
+            /* max-width: 50%; */
+            margin-left: 50px;
+            /* 将按钮推到其容器的右侧 */
+        }
+
+        .content h1 {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .content h2 {
+            font-size: 2.0rem;
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
+
+        .content p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .start_button {
+            background: linear-gradient(to right, #B3CDFF, #887EE5);
+            color: #fff;
+            font-size: 2rem;
+            padding: 20px 80px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-left: 5px;
+            margin-top: 20px;
+            /* 将按钮推到其容器的右侧 */
+        }
+
+        .start_button:hover {
+            transform: scale(1.1);
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 300px;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 600px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            width: 100%;
+            height: 90%;
+            /* 绝对定位使它相对于最近的已定位祖先元素 */
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            z-index: -1;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .nav-bar {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 50px;
+            display: flex;
+            align-items: center;
+            /* 垂直居中 */
+        }
+
+        .nav-links {
+            padding: 10px 1px;
+            display: flex;
+            align-items: center;
+            /* 确保链接垂直居中 */
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 40px;
+            /* 让链接之间有间隔 */
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="nav-bar">
+        <div class="logo" style="font-size: large;font-weight: bold;">Magic Tree</div>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#post">Post</a>
+        </nav>
+    </header>
+
+
+
+    <div class="container">
+
+        <div class="content">
+            <h1>Welcome to the Wishing Tree.</h1>
+            <h2>Here, your every wish will find a home!</h2>
+            <p>The Wishing Tree: Listening to Your Heart</p>
+            <p>
+                In our fast-paced lives, we often neglect our inner voices.
+                The Wishing Tree provides a quiet corner where you can talk about
+                your heart, share your dreams, and seek advice and support.
+                Whether it's a small wish or a big decision, this is your warmest haven.
+            </p>
+            <button class="start_button">Start</button>
+        </div>
+
+        <div class="image-container">
+            <div class="overlay"></div> <!-- 新增的覆盖层 -->
+            <img src="img\row_tree.png" alt="Wishing Tree">
+        </div>
+    </div>
+
+    <!-- 在此处引用外部 JavaScript 文件 -->
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>

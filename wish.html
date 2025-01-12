@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Tree</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            background-color: #1a2a6c;
+        }
+
+        /* body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('img/bg2.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-color: #1a2a6c;
+            color: #fff;
+        } */
+
+        /* 修改 .nav-bar，固定在顶部 */
+        .nav-bar {
+            position: fixed;
+            /* 让导航栏固定在顶部 */
+            top: 0;
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 50px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            /* 保证它显示在最上层 */
+        }
+
+
+        .nav-links {
+            padding: 10px 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 40px;
+            font-size: 1rem;
+        }
+
+        /* 修正 container，留出 header 的空间 */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            height: calc(100vh - 60px);
+            /* 减去 header 的高度，保证不重叠 */
+            /* 避免遮住导航栏 */
+            position: relative;
+        }
+
+        .tree-container {
+            position: relative;
+            width: 40%;
+            height: 85%;
+            z-index: 2;
+            /* 确保图片和气泡在前景 */
+        }
+
+        #threejs-canvas {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            /* 确保canvas在背景 */
+        }
+
+
+        .main_tree {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            width: 100%;
+            height: 80%;
+        }
+
+        .bubble-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+        }
+
+        @font-face {
+            font-family: 'MT';
+            /* 给你的字体起个名字 */
+            src:
+                url('font/Script MT Bold.ttf') format('truetype');
+            /* 指向.ttf字体文件 */
+            font-weight: normal;
+            /* 如果有不同粗细的字体，可以在这里指定 */
+            font-style: normal;
+            /* 如果有斜体样式，可以在这里指定 */
+        }
+
+        .bubble {
+            font-family: 'MT';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 30px 60px;
+            border-radius: 30px;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .bubble:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .bubble:nth-child(1) {
+            top: 10%;
+            left: -30%;
+        }
+
+        .bubble:nth-child(2) {
+            top: 30%;
+            left: -50%;
+        }
+
+        .bubble:nth-child(3) {
+            top: 50%;
+            left: -60%;
+        }
+
+        .bubble:nth-child(4) {
+            top: 70%;
+            left: -50%;
+        }
+
+        .bubble:nth-child(5) {
+            top: 15%;
+            right: -50%;
+        }
+
+        .bubble:nth-child(6) {
+            top: 40%;
+            right: -60%;
+        }
+
+        .bubble:nth-child(7) {
+            top: 65%;
+            right: -40%;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+        }
+
+        .button {
+            padding: 25px 130px;
+            border: none;
+            border-radius: 60px;
+            font-size: 25px;
+            color: white;
+            background-color: #243b6b;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #1a2454;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            /* 默认隐藏弹窗 */
+            position: fixed;
+            z-index: 3;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .modal-content {
+            position: relative;
+            /* 确保伪元素定位在该元素内 */
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            width: 700px;
+            height: 500px;
+            overflow: hidden;
+            /* 确保内容不会溢出圆角 */
+        }
+
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('img/image.png') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            /* 确保伪元素在内容之后 */
+            opacity: 0.8;
+            /* 设置透明度，值从 0 (完全透明) 到 1 (完全不透明) */
+            border-radius: inherit;
+            /* 继承自父元素的 border-radius */
+        }
+
+        .modal-content h2 {
+            font-size: 28px;
+            background: url('img/text_bg.png') no-repeat center center;
+            background-size: 500px 100px;
+            width: 100%;
+            min-height: 100px;
+            /* 最小高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .modal input {
+            width: 80%;
+            /* 或者其他你想要的宽度 */
+            padding: 10px;
+            margin: 100px auto 150px;
+            /* 上下外边距分别为 0 和 20px，左右外边距为 auto 实现水平居中 */
+            border: 1px solid #fff;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 23px;
+            display: block;
+            /* 确保输入框作为块级元素处理 */
+        }
+
+        .modal input:focus {
+            outline: none;
+            border-color: #66b3ff;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .modal button {
+            background: #243b6b;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: white;
+            padding: 20px 70px;
+            font-size: 25px;
+            cursor: pointer;
+            border-radius: 60px;
+        }
+
+        .modal button:hover {
+            background: #1a2454;
+        }
+
+
+        /* 弹窗样式 */
+        .answer-modal {
+            display: none;
+            /* 默认隐藏弹窗 */
+            position: fixed;
+            z-index: 3;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .answer-content {
+            position: relative;
+            /* 确保伪元素定位在该元素内 */
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            text-align: center;
+            width: 700px;
+            height: 500px;
+            overflow: hidden;
+            /* 确保内容不会溢出圆角 */
+        }
+
+        .answer-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('img/image.png') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            /* 确保伪元素在内容之后 */
+            opacity: 0.8;
+            /* 设置透明度，值从 0 (完全透明) 到 1 (完全不透明) */
+            border-radius: inherit;
+            /* 继承自父元素的 border-radius */
+        }
+
+        .answer-modal h2 {
+            font-size: 28px;
+            background: url('img/text_bg.png') no-repeat center center;
+            background-size: contain;
+            width: 100%;
+            height: 300px;
+            /* 最小高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-sizing: border-box;
+            margin-top: 50px;
+        }
+
+        .answer-modal .answer-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .answer-modal button {
+            background: #243b6b;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: white;
+            font-size: 25px;
+            padding: 20px 70px;
+            cursor: pointer;
+            border-radius: 60px;
+            margin-top: 50px;
+        }
+
+        .answer-modal button:hover {
+            background: #1a2454;
+        }
+    </style>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+
+<body>
+    <header class="nav-bar">
+        <div class="logo" style="font-size: large;font-weight: bold;">Magic Tree</div>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#post">Post</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="tree-container">
+            <div class="bubble-container">
+                <div class="bubble">Wait for better</div>
+                <div class="bubble">That's for sure</div>
+                <div class="bubble">Go for a chance</div>
+                <div class="bubble">Keep on fighting</div>
+                <div class="bubble">You need a little help</div>
+                <div class="bubble">Never let you down</div>
+                <div class="bubble">No compromise</div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="button" id="wishingButton">Wishing</button>
+            <button class="button" id="answerButton">Answering</button>
+        </div>
+    </div>
+
+    <!-- 弹窗结构 -->
+    <div class="modal" id="wishingModal">
+        <div class="modal-content">
+            <h2>Enter Your Wish</h2>
+            <input type="text" placeholder="Make a wish..." id="wishInput">
+            <div class="modal-buttons">
+                <button id="cancelButton">Cancel</button>
+                <button id="submitButton">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹窗结构 -->
+    <div class="modal" id="insertModal">
+        <div class="modal-content">
+            <h2>Enter the Answer</h2>
+            <input type="text" placeholder="Enter a answer..." id="insertInput">
+            <div class="modal-buttons">
+                <button id="cancelinserButton">Cancel</button>
+                <button id="submitinserButton">Submit</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- 随机答案弹窗 -->
+    <div class="answer-modal" id="answerModal">
+        <div class="answer-content">
+            <h2 id="randomAnswer">Your Answer</h2>
+            <div class="answer-buttons">
+                <button id="backButton">Back</button>
+                <button id="confirmButton">Confirm</button>
+            </div>
+        </div>
+
+        <script>
+            var scene = new THREE.Scene();
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            //窗口宽高比
+            var k = width / height;
+            //三维场景显示范围控制系数，系数越大，显示的范围越大
+            var s = 30;
+            //创建相机对象
+            var camera = new THREE.OrthographicCamera(-s * k, s * k, s, -s, 1, 1000);
+            //设置相机位置
+            camera.position.set(45, 0, 0);
+            //设置相机方向(指向的场景对象)
+            camera.lookAt(scene.position);
+
+            //辅助坐标系
+            // var axisHelper = new THREE.AxesHelper(250);
+            // scene.add(axisHelper);
+
+            // 创建环境光，并设置其颜色和强度
+            var ambientLight = new THREE.AmbientLight(0xffffff, 1); // 白色光，强度为0.5
+            // 将环境光添加到场景中
+            scene.add(ambientLight);
+
+            // 创建一个方向光，并设置其颜色和强度
+            var directionalLight = new THREE.DirectionalLight(0xffffff, 20);
+            // 设置方向光的位置，通常我们会将其放置在相机或观察者的附近
+            directionalLight.position.set(5, 10, 5);
+            // 将方向光添加到场景中
+            scene.add(directionalLight);
+
+            // 创建一个方向光，并设置其颜色和强度
+            var directionalLight2 = new THREE.DirectionalLight(0xffffff, 20);
+            // 设置方向光的位置，通常我们会将其放置在相机或观察者的附近
+            directionalLight2.position.set(45, -15, 0);
+            // 将方向光添加到场景中
+            scene.add(directionalLight2);
+
+            // 可选：添加辅助对象帮助可视化方向光的方向（仅用于开发和调试）
+            // var helper = new THREE.DirectionalLightHelper(directionalLight, 5);
+            // var helper2 = new THREE.DirectionalLightHelper(directionalLight2, 5);
+            // scene.add(helper);
+            // scene.add(helper2);
+
+            // 加载等矩形背景图像
+            var loaders = new THREE.TextureLoader();
+            loaders.load('img/bg2.png', function (texture) {
+                // 设置场景的背景
+                scene.background = texture;
+                // 生成预过滤的球面反射环境贴图
+                var pmremGenerator = new THREE.PMREMGenerator(renderer);
+                var envMap = pmremGenerator.fromEquirectangular(texture).texture;
+                // 设置场景的环境贴图为预过滤后的结果
+                scene.environment = envMap;
+                // 渲染完成后释放PMREMGenerator以节省资源
+                pmremGenerator.dispose();
+                // 确保渲染一次，以便更新环境映射
+                renderer.render(scene, camera);
+            });
+
+            let loader = new THREE.GLTFLoader();
+            // 加载模型文件
+            loader.load('models/c_g.glb', function (gltf) {
+                scene.add(gltf.scene);
+                // 将模型沿Y轴向下移动（假设你想将模型下移5个单位）
+                gltf.scene.position.y = -s / 1.5;  // 根据需要调整这个值
+            }, undefined, function (error) {
+                console.error(error);
+            });
+
+
+            var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(width, height);
+            renderer.setClearColor(0xfffffff, 0);
+            // 设置渲染器的dom元素样式
+
+            renderer.domElement.style.position = 'absolute';
+            renderer.domElement.style.top = '0';
+            renderer.domElement.style.left = '0';
+            renderer.domElement.style.zIndex = '-1'; // 将其放在最底层
+
+            // 添加到body中
+            document.body.appendChild(renderer.domElement);
+            document.body.appendChild(renderer.domElement);
+
+
+            function render() {
+                renderer.render(scene, camera); //执行渲染操作
+                scene.rotateY(0.01);//每次绕y轴旋转0.01弧度
+                requestAnimationFrame(render); //请求再次执行渲染函数render
+            }
+            render();
+        </script>
+
+        <script>
+
+            // 答案数组
+            const answers = [
+                "Never let you down",
+                "Wait for better",
+                "Go for a chance",
+                "Keep on fighting",
+                "You need a little help",
+                "That's for sure",
+                "No compromise"
+            ];
+
+            // 获取元素
+            const wishingButton = document.getElementById('wishingButton');
+            const wishingModal = document.getElementById('wishingModal');
+            const cancelButton = document.getElementById('cancelButton');
+            const submitButton = document.getElementById('submitButton');
+            const wishInput = document.getElementById('wishInput');
+
+            // 获取元素
+            const answerButton = document.getElementById('answerButton');
+            const insertModal = document.getElementById('insertModal');
+            const cancelinserButton = document.getElementById('cancelinserButton');
+            const submitinserButton = document.getElementById('submitinserButton');
+            const insertInput = document.getElementById('insertInput');
+
+            // 第二个弹窗元素
+            const answerModal = document.getElementById('answerModal');
+            const randomAnswerText = document.getElementById('randomAnswer');
+            const backButton = document.getElementById('backButton');
+            const confirmButton = document.getElementById('confirmButton');
+
+            document.addEventListener('DOMContentLoaded', function () {
+                wishingModal.style.display = 'none';
+                answerModal.style.display = 'none';
+                insertModal.style.display = 'none';
+            });
+
+            // 打开弹窗
+            wishingButton.addEventListener('click', () => {
+                wishingModal.style.display = 'flex';
+            });
+
+            // 打开弹窗
+            answerButton.addEventListener('click', () => {
+                insertModal.style.display = 'flex';
+            });
+
+            // 关闭弹窗
+            cancelButton.addEventListener('click', () => {
+                wishingModal.style.display = 'none';
+                wishInput.value = "";
+            });
+
+            // 关闭弹窗
+            cancelinserButton.addEventListener('click', () => {
+                insertModal.style.display = 'none';
+                insertInput.value = "";
+            });
+
+
+            // 修改提交按钮事件
+            submitButton.addEventListener('click', () => {
+                const wish = wishInput.value.trim();
+                if (wish) {
+                    // 随机选取一个答案
+                    const randomIndex = Math.floor(Math.random() * answers.length);
+                    const randomAnswer = answers[randomIndex];
+
+                    // 显示答案并打开答案弹窗
+                    randomAnswerText.textContent = randomAnswer;
+                    wishingModal.style.display = 'none'; // 关闭输入弹窗
+                    answerModal.style.display = 'flex'; // 显示答案弹窗
+                    wishInput.value = ""; // 清空输入框
+                } else {
+                    alert("Please enter a wish before proceeding!");
+                }
+            });
+
+            // 插入提交按钮事件
+            submitinserButton.addEventListener('click', () => {
+                const inserts = insertInput.value.trim();
+                if (inserts) {
+                    // 使用 push() 方法添加新元素
+                    answers.push(inserts);
+                    insertModal.style.display = 'none';
+                    insertInput.value = "";
+                    alert("Your answer have been saved!");
+                } else {
+                    alert("Please enter a answer!");
+                }
+            });
+
+            // 答案弹窗的“Back”按钮，回到主页面
+            backButton.addEventListener('click', () => {
+                answerModal.style.display = 'none';
+                wishingModal.style.display = 'flex'; // 输入弹窗
+            });
+
+            // 答案弹窗的“Confirm”按钮
+            confirmButton.addEventListener('click', () => {
+                answerModal.style.display = 'none';
+            });
+        </script>
+
+</body>
+
+</html>

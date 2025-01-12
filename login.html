@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Tree</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            /* 设置背景图片 */
+            background-image: url('img/bg.png');
+            /* 确保背景图片不会重复 */
+            background-repeat: no-repeat;
+            /* 背景图片大小覆盖整个body，可以根据需要选择其他值如 'contain' 或者具体的宽度和高度 */
+            background-size: cover;
+            /* 背景图片位置居中 */
+            background-position: center;
+            /* 设置一种颜色作为背景图片加载前或者图片无法加载时的背景色 */
+            background-color: #1a2a6c;
+            /* 使用原来的渐变色中的一个颜色，确保视觉连续性*/
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .left-panel {
+            width: 40%;
+            padding: 50px;
+            /* background: rgba(0, 0, 0, 0.3); */
+            border-radius: 10px;
+        }
+
+        .right-panel {
+            width: 60%;
+            padding: 50px;
+            /* background: rgba(255, 255, 255, 0.3); */
+            border-radius: 10px;
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            margin-left: 30px;
+        }
+
+        .logo img {
+            width: 50px;
+            margin-right: 10px;
+        }
+
+        .social-buttons {
+            margin-bottom: 30px;
+        }
+
+        .social-buttons button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .social-buttons button.google {
+            background: #ffffff;
+            color: #3c3c3c;
+        }
+
+        .social-buttons button.facebook {
+            background: #ffffff;
+            color: #3c3c3c;
+        }
+
+        .email-sign-in {
+            margin-bottom: 30px;
+        }
+
+        .email-sign-in input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            text-indent: 12px;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-sizing: border-box;
+            /* 确保 padding 和 border 包含在 width 和 height 内 */
+        }
+
+        .email-sign-in input[type="email"] {
+            background: rgba(255, 255, 255, 0);
+        }
+
+        .email-sign-in input[type="password"] {
+            background: rgba(255, 255, 255, 0);
+        }
+
+        .email-sign-in input[type="email"]::placeholder {
+            color: #fff;
+            text-indent: 12px;
+        }
+
+        .email-sign-in input[type="password"]::placeholder {
+            color: #ffffff;
+            text-indent: 12px;
+        }
+
+
+        .email-sign-in .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .email-sign-in .forgot-password a {
+            color: #1675E1;
+            text-decoration: none;
+        }
+
+        .email-sign-in button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background: #1675E1;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .email-sign-in button:hover {
+            background: #2575fc;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .signup-link a {
+            color: #1675E1;
+            text-decoration: none;
+        }
+
+        .tree-image {
+            position: absolute;
+            top: 10%;
+            right: 8%;
+            width: 42%;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        .note-image {
+            position: absolute;
+            bottom: 12%;
+            right: 8%;
+            width: 20%;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        .right-panel .write_bg {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            padding: 10px;
+            background: linear-gradient(to bottom, rgba(127, 163, 222, 0.7), rgba(245, 250, 255, 0.7));
+            border-radius: 40px;
+            width: 50%;
+            /* 或者一个具体的像素值，例如 400px */
+            height: 85%;
+            /* 根据内容自动调整高度 */
+            z-index: 0;
+        }
+
+        .right-panel .content {
+            position: absolute;
+            top: 8%;
+            right: 10%;
+            padding: 10px;
+            /* background: rgba(255, 255, 255, 0.7); */
+            border-radius: 10px;
+            width: 40%;
+            /* 或者一个具体的像素值，例如 400px */
+            height: auto;
+            /* 根据内容自动调整高度 */
+            z-index: 2;
+        }
+
+        .right-panel .content h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .right-panel .content p {
+            font-size: 1.0rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .google img {
+            width: 3%;
+            /* 或者其他的百分比值 */
+            height: auto;
+            /* 保持原始宽高比 */
+            margin-right: 8px;
+            /* 可选：设置图标与文本之间的间距 */
+        }
+
+        .facebook img {
+            width: 3%;
+            /* 或者其他的百分比值 */
+            height: auto;
+            /* 保持原始宽高比 */
+            margin-right: 8px;
+            /* 可选：设置图标与文本之间的间距 */
+        }
+
+
+        /*利用背景图片安放图标*/
+        #tip01 {
+            /* padding: 0 10px 0 35px; */
+            background-size: 20px 20px;
+            /* 设置图标的宽度和高度 */
+            background-image: url(img/youjian.png);
+            background-repeat: no-repeat;
+            background-position: center left 5px;
+        }
+
+        #tip02 {
+            /* padding: 0 10px 0 35px; */
+            background-size: 20px 20px;
+            /* 设置图标的宽度和高度 */
+            background-image: url(img/mima.png);
+            background-repeat: no-repeat;
+            background-position: center left 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="logo">
+                <img src="img/logo.png" alt="Magic Tree Logo">
+                <h1>Magic Tree</h1>
+            </div>
+            <p style="text-align: center;">Let’s sign in to your account</p>
+
+            <div class="social-buttons">
+                <button class="google"><img src="img\google.png" alt="Google Icon"> Google</button>
+                <button class="facebook"><img src="img\facebook.png" alt="Facebook Icon">Facebook</button>
+            </div>
+
+            <p style="text-align: center;">——— or sign in with email ———</p>
+
+            <div class="email-sign-in">
+                <input type="email" placeholder="Email" id="tip01">
+                <input type="password" placeholder="Password" id="tip02">
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button class="login_button">Sign In</button>
+            </div>
+
+            <div class="signup-link">
+                <p>doesn’t have an account? <a href="#">Sign Up</a></p>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="content">
+                <h1>Explore uncharted territory with us!</h1>
+                <p>Here, you can talk to your mind with peace of mind and find a warm destination in your inner desire
+                    and trouble. Whether you want to get guidelines, seek comfort, or just want to share your feelings,
+                    your wish tree is your most intimate partner.</p>
+            </div>
+            <img src="img/row_tree.png" alt="Wishing Tree" class="tree-image">
+            <img src="img/note.png" alt="Note" class="note-image">
+            <div class="write_bg"></div>
+        </div>
+
+    </div>
+
+
+    <!-- 在此处引用外部 JavaScript 文件 -->
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>
